@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0"/>
+  <title>GrandBox Home</title>
+
+  <!-- CSS  -->
+  
+  <link href="{% static 'css/materialize.css' %}" type="text/css" rel="stylesheet" media="screen,projection"/>
+  <link href="{%static 'css/style.css' %}" type="text/css" rel="stylesheet" media="screen,projection"/>
+</head>
+<body>
+  
+<nav class="light-blue lighten-1" role="navigation">
+    <div class="nav-wrapper container"><a id="logo-container" href="#" class="brand-logo">GrandBox</a>
+      <ul class="right hide-on-med-and-down">
+        <li><a href="/admin/">Admin</a></li>
+	<li class="active"><a href="/" >Home</a></li>
+	<li><a href="/orders/">Orders</a></li>
+	<li><a href="/customers/">Customers</a></li>
+      </ul>
+	
+      <ul id="nav-mobile" class="side-nav">
+        <li><a href="#">Navbar Link</a></li>
+      </ul>
+      <a href="#" data-activates="nav-mobile" class="button-collapse"><i class="material-icons">GrandBox Menu</i></a>
+    </div>
+  </nav>
+
+  <div class="section no-pad-bot" id="index-banner">
+    <div class="container">
+      <br><br>
+      <h1 class="header center orange-text">Welcome Amit Sikri</h1>
+      <div class="row center">
+        <h5 class="header col s12 light">Search your orders or customers...</h5>
+      </div>
+      <!--div class="row center">
+        <a href="http://materializecss.com/getting-started.html" id="download-button" class="btn-large waves-effect waves-light orange">Get Started</a>
+      </div-->
+	<div class="row">
+	    <form method="" class="col s12 m12">
+	      <div class="row">
+		<div class="input-field col s12 m5">
+		  <input placeholder="Search here ..." id="search" type="text">
+		  <!--label for="first_name">First Name</label-->
+		<ul class="collection with-header">	
+		<li class="collection-header">... </li>
+		</ul>
+	       </div>
+	      
+	      <div id="cardView" class="card-panel col s12 offset-m1 m6">
+		  
+		
+            
+	    </div> 
+        </div>
+	    </form>
+	</div>
+      <br><br>
+
+    </div>
+  </div>
+
+
+  <div class="container">
+    <div class="section">
+
+   <div class="row">
+      <div class="col s12 m12">
+       <table class="highlight">
+        <thead>
+          <tr>
+              <th data-field="id">Order Id</th>
+	    <th data-field="name">Date</th>         
+	     <th data-field="name">Order Name</th>
+	       <th data-field="price">Current Status</th>
+              <th data-field="price">Amount(Rs.)</th>
+	      <th data-field="price">Payment Status</th>
+          </tr>
+        </thead>
+
+        <tbody id="table-body">
+        
+	</tbody>
+	</table>
+      </div>
+    
+          </div>
+
+    </div>
+    <br><br>
+
+    <div class="section">
+
+    </div>
+  </div>
+
+  <footer class="page-footer light-blue">
+    <div class="container">
+      <div class="row">
+        <div class="col l6 s12">
+          <h5 class="white-text">GrandBox Custom Tailoring </h5>
+          <p class="grey-text text-lighten-4"></p>
+
+
+        </div>
+        
+      </div>
+    </div>
+    <div class="footer-copyright">
+      <div class="container">
+      Made by <a class="white-text" href="">Prateek and Lovepreet</a>
+      </div>
+    </div>
+  </footer>
+
+
+  <!--  Scripts-->
+  <script src="{% static 'js/jquerymin.js' %}"></script>
+  <script src="{% static 'js/materialize.js' %}"></script>
+  <script src="{% static 'js/init.js' %}"></script>
+
+
+  <script>
+var searchUsers = (function() {
+   
+   function getOrder(cid) {
+        $.ajax({
+            url : '/searchOrder/',
+            data: { id : cid },
+            type: 'GET',
+            success: function(data, status, xhr) {
+			console.log("Orders recieved ");                
+		updateOrders(data['orders']);
+            }
+        });
+    }
+ 	function updateOrders(orders) {
+        
+	if (orders.length === 0 ) {
+            $('#table-body').html('No Orders !');
+        } else {
+         
+        //$('.collection-item').remove();
+        
+	
+	var content = "";
+	for (var i = 0; i < orders.length; i++) {
+	var AMT_STATUS ="Unpaid";
+	var CURRENT_STATUS = "Booked";
+	str = "<tr>"
+	if(orders[i].amount_status =='2')
+		AMT_STATUS = "Paid";
+		
+	if(orders[i].order_status=='2')
+		CURRENT_STATUS = "COMPLETED";
+	else if(orders[i].order_status =='3')
+		CURRENT_STATUS = "DELIVERED";
+		
+		var aopen = "<a href='/admin/customer/order/"+ orders[i].id+"/change/' target='_blank'>";
+		var aclose = "</a>";
+         	str =str+"<td>"+ orders[i].id  +"</td>"
+			+"<td>"+ orders[i].date  +"</td>"		    
+			+"<td>"+ orders[i].name  +"</td>"
+			+"<td>"+ aopen+ CURRENT_STATUS+aclose  +"</td>"	
+			+"<td>"+ orders[i].amount   +"</td>"
+			+"<td>"+ aopen+ AMT_STATUS +aclose +"</td>"	;
+	
+	str = str +"</tr>";
+	content += str;
+	}    
+	$('#table-body').html(content);
+           // el.html(orders[i].order_name);
+           // $('.collection').append(el);	
+	} 		
+        
+    }
+
+	function updateCardResult(customer) {
+        
+	if (customer.length === 0 ) {
+            $('#cardView').html('Nobody Selected !');
+        } else {
+         
+        //$('.collection-item').remove();
+        
+	
+	var content = "";
+	
+	str = "<ul>"
+	
+		var aopen = "<a href='/admin/customer/customer/"+ customer[0].id+"/change/' target='_blank'>";
+		var aclose = "</a>";
+         	str =str+"<li class='collection-header2'>"+ aopen+ customer[0].name +aclose  +"</li>"
+			+"<li> ID : "+ customer[0].id   +"</li>"		    
+			+"<li> Age : "+ customer[0].age   +"</li>"
+			+"<li> Sex : "+ customer[0].sex   +"</li>"	
+			+"<li> Email: "+ customer[0].email    +"</li>"
+			+"<li> Phone : "+ customer[0].phone  +"</li>"
+			+"<li> Details : "+ customer[0].details  +"</li>";
+	
+	str = str +"</ul>";
+	content += str;
+	    
+	$('#cardView').html(content);
+           // el.html(orders[i].order_name);
+           // $('.collection').append(el);	
+	} 		
+        
+    }
+	
+    function updateResults(users) {
+        if (users.length === 0 ) {
+            $('.collection-header').html('No Results!');
+        } else {
+            $('.collection-header').html(users.length + ' customers found');
+        }
+        $('.collection-item').remove();
+        for (var i = 0; i < users.length; i++) {
+            var el = $('<li class="collection-item"/>');
+	    
+            el.html(users[i].name);
+            $('.collection').append(el);
+	    var id = users[i].id;	
+	    el.on('click',function(){ getOrder(id); updateCard(id) } );
+		 		
+        }
+    }
+    function updateCard(id){
+	 
+	$.ajax({
+            url : '/updateCard/',
+            data: { id : id },
+            type: 'GET',
+            success: function(data, status, xhr) {
+			console.log("Response recieved ");                
+		updateCardResult(data['customers']);
+            }
+        });
+     }
+    function getUsers() {
+        $.ajax({
+            url : '/search/',
+            data: { name : $('#search').val() },
+            type: 'GET',
+            success: function(data, status, xhr) {
+			console.log("Response recieved ");                
+		updateResults(data['customers']);
+            }
+        });
+    }
+    function init() {
+        $('#search').on('input',getUsers);
+    }
+    return {
+        'init' : init,
+    };
+})();
+$(document).ready(searchUsers.init);
+</script>
+
+  </body>
+</html>

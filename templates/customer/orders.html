@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+<html>
+	<head>
+		<title> Orders Page </title>
+	</head>
+
+	<body>
+		<h1> Welcome to GrandBox </h1>
+		<ul id ="orders">
+			<script>console.log(orders)</script>
+				<p> {{me}}</p>			
+			{% for order in orders_list %}
+				<li>	
+					{{order.order_name}}
+		 
+				</li>
+			{% endfor %}
+		</ul>
+	</body>
+
+</html>
